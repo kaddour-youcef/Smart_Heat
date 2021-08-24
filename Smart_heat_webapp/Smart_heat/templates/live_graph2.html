@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  {% load static %}
+<link rel="stylesheet" href="{% static 'bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'graph.css' %}">
+
+<script src="{% static 'bootstrap.min.js' %}"></script>
+</head>
+<body>
+<div class="container">
+<center><h1>Live Graph</h1></center>
+<hr>
+    
+    <div class="row" id="menu">
+		<nav>
+			<ul>
+				<li class="deroulant"><a href="#">Data &ensp;</a>
+					<ul class="sous">
+						<li><button type="button" name="meteo" id="btn_meteo" class="button1" >Température extérieure </button></li>
+						<li><button type="button" name="temp1" id="btn_temp1" class="button1" >Température intérieure zone 1</button></li>
+						<li><button type="button" name="temp2" id="btn_temp2" class="button1" >Température intérieure zone 2</button></li>
+						<li><button type="button" name="occ1"  id="btn_occ1"  class="button1" >Occupation zone 1</button></li>
+						<li><button type="button" name="occ2"  id="btn_occ2"  class="button1" >Occupation zone 2</button></li>
+						<li><button type="button" name="thm1"  id="btn_thm1"  class="button1" >Thermostat zone 1</button></li>
+						<li><button type="button" name="thm2"  id="btn_thm2"  class="button1" >Thermostat zone 2</button></li>
+						<li><button type="button" name="E_real"  id="btn_E_real"  class="button1" >Energie réel</button></li>
+					</ul>
+				</li>
+				<li class="deroulant"><a href="#">Model de prédiction &ensp;</a>
+					<ul class="sous">
+						<li><button type="button" name="R_lin" id="btn_R_lin" class="button1" >Régression linéaire</button></li>
+						<li><button type="button" name="R_bay" id="btn_R_bay" class="button1" >Régression bayésienne</button></li>
+						<li><button type="button" name="R_knn" id="btn_R_knn" class="button1" >Régression par KNN</button></li>
+						<li><button type="button" name="R_rnn" id="btn_R_rnn" class="button1" >Régression par RNN</button></li>
+						
+					</ul>
+				</li>
+				
+				<li class="deroulant"><a href="#">Update rate &ensp;</a>
+					<ul class="sous">
+						<li><button type="button" name="UR_05" id="btn_ur05" class="button1" >.5 S</button></li>
+						<li><button type="button" name="UR_1S" id="btn_ur1s" class="button1" >1 s</button></li>
+						<li><button type="button" name="UR_1m" id="btn_ur1m" class="button1" >1 min</button></li>
+						<li><button type="button" name="UR_15m" id="btn_ur15m" class="button1" >15 min </button></li>
+					</ul>
+				</li>
+					<li><a href="{% url 'home' %}">Home</a></li>
+			</ul>
+		</nav
+		<br><br>
+		
+		<div class="col-md-4">
+           
+		</div>
+
+    </div>
+     
+<br><br>
+<hr/>
+
+<div class="row">
+    <div id="chartContainer1" style="height: 400px; width: 50%;"></div>
+	<div id="chartContainer2" style="height: 400px; width: 50%;"></div>
+	<div id="chartContainer3" style="height: 400px; width: 50%;"></div>
+	<div id="chartContainer4" style="height: 400px; width: 50%;"></div>
+	<div id="chartContainer5" style="height: 400px; width: 50%;"></div>
+	<div id="chartContainer6" style="height: 400px; width: 50%;"></div>
+	<div id="chartContainer7" style="height: 400px; width: 50%;"></div>
+	<div id="chartContainer8" style="height: 400px; width: 50%;"></div>
+	<div id="chartContainer9" style="height: 400px; width: 50%;"></div>
+	
+<br><br>
+
+
+</div>
+</body>
+
+
+<script src="{% static 'jquery-3.3.1.min.js' %}"></script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+
+<script>
+
+// fonction pour l'affichage de l'ensemble des graphes
+$("#btn_R_lin").click(function(){
+    com=1
+	var chart_name= "chartContainer1" // chart container 
+	var chart_title= "Consomation Enérgétique (Lin)" // cariable a trace
+	var Y_axe_title= "Consomation [Joule]"
+	var chart_url = "{% url 'fetch_sensor_values_ajax' %}" //pour fonctions
+	fill_graph(com,chart_name ,chart_title, Y_axe_title, chart_url);
+    
+});
+$("#btn_R_bay").click(function(){
+    com=12
+	var chart_name= "chartContainer1" // chart container 
+	var chart_title= "Consomation Enérgétique (Bay)" // cariable a trace
+	var Y_axe_title= "Consomation [Joule]"
+	var chart_url = "{% url 'fetch_sensor_values_ajax' %}" //pour fonctions
+	fill_graph(com,chart_name ,chart_title, Y_axe_title, chart_url);
+    
+});
+$("#btn_R_knn").click(function(){
+    com=13
+	var chart_name= "chartContainer1" // chart container 
+	var chart_title= "Consomation Enérgétique (KNN)" // cariable a trace
+	var Y_axe_title= "Consomation [Joule]"
+	var chart_url = "{% url 'fetch_sensor_values_ajax' %}" //pour fonctions
+	fill_graph(com,chart_name ,chart_title, Y_axe_title, chart_url);
+    
+});
+
+$("#btn_meteo").click(function(){
+
+	var chart_name= "chartContainer2" // chart container 
+	com = 2
+	var chart_title= "Temperature ext" // cariable a trace
+	var Y_axe_title= "Temperature [c°]"
+	var chart_url = "{% url 'fetch_sensor_values_ajax' %}" //pour fonctions
+	fill_graph(com,chart_name ,chart_title, Y_axe_title, chart_url);
+});
+
+$("#btn_temp1").click(function(){
+
+	var chart_name= "chartContainer3" // chart container 
+	com = 3
+	var chart_title= "Température int zone 1" // cariable a trace
+	var Y_axe_title= "Temperature [c°]"
+	var chart_url = "{% url 'fetch_sensor_values_ajax' %}" //pour fonctions
+	fill_graph(com,chart_name ,chart_title, Y_axe_title, chart_url);
+});
+
+$("#btn_temp2").click(function(){
+
+	var chart_name= "chartContainer4" // chart container 
+	com = 4
+	var chart_title= "Température int zone 2" // cariable a trace
+	var Y_axe_title= "Temperature [c°]"
+	var chart_url = "{% url 'fetch_sensor_values_ajax' %}" //pour fonctions
+	fill_graph(com,chart_name ,chart_title, Y_axe_title, chart_url);
+});
+
+$("#btn_occ1").click(function(){
+
+var chart_name= "chartContainer5" // chart container 
+	com = 5
+	var chart_title= "Occupation zone 1 [Nbr]" // cariable a trace
+	var Y_axe_title= "Nbr personnes"
+	var chart_url = "{% url 'fetch_sensor_values_ajax' %}" //pour fonctions
+	fill_graph(com,chart_name ,chart_title, Y_axe_title, chart_url);
+});
+
+$("#btn_occ2").click(function(){
+
+var chart_name= "chartContainer6" // chart container 
+	com = 6
+	var chart_title= "Occupation zone 2 [Nbr]" // cariable a trace
+	var Y_axe_title= "Nbr personnes"
+	var chart_url = "{% url 'fetch_sensor_values_ajax' %}" //pour fonctions
+	fill_graph(com,chart_name ,chart_title, Y_axe_title, chart_url);
+});
+
+$("#btn_thm1").click(function(){
+
+var chart_name= "chartContainer7" // chart container 
+	com = 7
+	var chart_title= "Thermostat zone 1 [Nbr]" // cariable a trace
+	var Y_axe_title= "Temperature [c°]"
+	var chart_url = "{% url 'fetch_sensor_values_ajax' %}" //pour fonctions
+	fill_graph(com,chart_name ,chart_title, Y_axe_title, chart_url);
+});
+
+$("#btn_thm2").click(function(){
+
+var chart_name= "chartContainer8" // chart container 
+	com = 8
+	var chart_title= "Thermostat zone 2 [Nbr]" // cariable a trace
+	var Y_axe_title= "Temperature [c°]"
+	var chart_url = "{% url 'fetch_sensor_values_ajax' %}" //pour fonctions
+	fill_graph(com,chart_name ,chart_title, Y_axe_title, chart_url);
+});
+
+$("#btn_E_real").click(function(){
+var chart_name= "chartContainer9" // chart container 
+	com = 9
+	var chart_title= "Consomation Enérgétique" // cariable a trace
+	var Y_axe_title= "Consomation [Joule]"
+	var chart_url = "{% url 'fetch_sensor_values_ajax' %}" //pour fonctions
+	fill_graph(com,chart_name ,chart_title, Y_axe_title, chart_url);
+});
+
+// changement de l'updateRate
+$("#btn_ur05").click(function(){
+	var updateInterval = 500
+});
+
+$("#btn_ur1s").click(function(){
+	var updateInterval = 1000
+});
+
+$("#btn_ur1m").click(function(){
+	var updateInterval = 1000 * 60
+});
+
+$("#btn_ur15m").click(function(){
+	var updateInterval = 1000 * 60 * 15
+});
+
+
+//fonction fill_graph
+function fill_graph(com,chart_name ,chart_title, Y_axe_title, chart_url, updateInterval){
+		var dps = []; // dataPoints
+
+// model du graphe (avec canvas.js) on lui passe le titre et les axes	
+var chart = new CanvasJS.Chart(chart_name, {
+	animationEnabled: true,
+	title: {
+		text: chart_title
+	},
+	axisX: {
+		title: "Time"
+	},
+	axisY: {
+		title: Y_axe_title,
+		suffix: ""
+	},
+	data: [{
+		type: "line",
+		name: "CPU Utilization",
+		connectNullData: true,
+		xValueType: "dateTime",
+		xValueFormatString: "DD MMM hh:mm TT",
+		yValueFormatString: "#,##0.##\"mm\"",
+		dataPoints: dps
+	}]
+});
+
+
+var xVal = 0;
+var yVal = 100;
+var updateInterval = 500; //miliseconds  default 
+var dataLength = 40; // nombre de point visible dans le graphe
+
+// http request a la backend avec une function ajax
+// le "com" represente l'identifiant de la données a afficher 
+
+var updateChart = function () {
+
+    $.ajax({
+            type:"get",
+            url: "{% url 'fetch_sensor_values_ajax' %}" ,
+            data: {
+                     'id': com
+                   },
+            success: function(data) {
+                console.log(data.result);
+                for(index = 0; index < data.result.length; index++) {
+                    var str_array = data.result[index].split(',');
+                    dps.push({
+								x: Date.parse(str_array[1]),
+								y: Number(str_array[0])
+							});
+                   }
+                return data;
+                    },
+            error: function(){
+                    console.log("error");
+                 }
+            });
+
+		if (dps.length > dataLength) {
+		dps.shift();
+		}
+
+		chart.render();
+		
+};
+
+// update le graph et definition de l'update_rate
+
+updateChart(dataLength);
+setInterval(function(){updateChart()}, updateInterval);
+}
+
+
+
+</script>
+
+
+</html>
